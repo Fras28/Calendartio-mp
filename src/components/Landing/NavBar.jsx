@@ -21,16 +21,16 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Tooltip,
 } from '@chakra-ui/react';
 import {
   HamburgerIcon,
   CloseIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  SettingsIcon,
 } from '@chakra-ui/icons';
-import { logout} from '../redux/slice';
-
-
+import { logout } from '../redux/slice';
 
 const NAV_ITEMS = [
   {
@@ -66,10 +66,6 @@ const NAV_ITEMS = [
   {
     label: 'Learn Design',
     href: '#',
-  },
-  {
-    label: 'Ver Reservas',
-    href: '/admin',
   },
 ];
 
@@ -222,6 +218,7 @@ const WithSubnavigation = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, token } = useSelector((state) => state.reservas);
+  const role = useSelector((state) => state?.reservas?.role);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -231,7 +228,7 @@ const WithSubnavigation = () => {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('#E5B9D7', 'gray.800')}
+        bg={useColorModeValue('#88B9BF', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         minH={'60px'}
         py={{ base: 2 }}
@@ -251,8 +248,25 @@ const WithSubnavigation = () => {
             aria-label={'Toggle Navigation'}
           />
         </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
+        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
           <img src={Logo} style={{ height: "80px" }} alt="Logo" />
+          
+          {role?.name === 'Admin' && (
+            <Tooltip label="Panel de Administrador" placement="bottom">
+              <IconButton
+                as={Link}
+                to="/admin"
+                icon={<SettingsIcon />}
+                variant="ghost"
+                color="#6C442B"
+                aria-label="Admin Panel"
+                ml={2}
+                _hover={{
+                  bg: 'pink.50',
+                }}
+              />
+            </Tooltip>
+          )}
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             <DesktopNav />
@@ -272,11 +286,11 @@ const WithSubnavigation = () => {
                 variant={'link'}
                 cursor={'pointer'}
                 minW={0}>
-                <Text color={"#6C442B"}>Hola,{user?.username}!</Text>
+                <Text color={"#6C442B"}>Hola, {user?.username}!</Text>
               </MenuButton>
               <MenuList>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                <MenuItem as={NavLink} to={"/perfil"} >Perfil</MenuItem>
+                <MenuItem as={NavLink} to={"/perfil"}>Perfil</MenuItem>
               </MenuList>
             </Menu>
           ) : (

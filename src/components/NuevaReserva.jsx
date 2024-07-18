@@ -38,24 +38,33 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
 
   useEffect(() => {
     updateAvailableDates();
-  }, [formData.prestador, reservas]);
-
+  }, [formData.prestador, reservas, prestadores]);
+  
   useEffect(() => {
     updateAvailableHours();
-  }, [formData.fecha, formData.prestador, reservas]);
+  }, [formData.fecha, formData.prestador, reservas, prestadores]);
 
   const updateAvailableDates = () => {
     if (!formData.prestador) return;
+  
+    const selectedPrestador = prestadores.find(p => p.id === parseInt(formData.prestador));
+    if (!selectedPrestador) return;
   
     const today = new Date();
     const dates = [];
     for (let i = 0; i < 30; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      if (date.getDay() !== 0) { // Excluye los domingos
-        if (!isDayFull(date)) {
-          dates.push(date);
-        }
+      const dayOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'][date.getDay()];
+      
+      const hasAvailableHorario = selectedPrestador.attributes.horarios.data.some(horario => 
+        horario.attributes.diaSemana === dayOfWeek &&
+        new Date(horario.attributes.fechaInicio) <= date &&
+        new Date(horario.attributes.fechaFin) >= date
+      );
+  
+      if (hasAvailableHorario && !isDayFull(date)) {
+        dates.push(date);
       }
     }
     setAvailableDates(dates);
@@ -63,9 +72,40 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
 
   const updateAvailableHours = () => {
     if (!formData.prestador || !formData.fecha) return;
-
-    const hours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
-    const availableHours = hours.filter(hour => !isHourReserved(formData.fecha, `${hour}:00.000`));
+  
+    const selectedPrestador = prestadores.find(p => p.id === parseInt(formData.prestador));
+    if (!selectedPrestador) return;
+  
+    const selectedDate = new Date(formData.fecha);
+    const dayOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'][selectedDate.getDay()];
+  
+    const availableHorarios = selectedPrestador.attributes.horarios.data.filter(horario => 
+      horario.attributes.diaSemana === dayOfWeek &&
+      new Date(horario.attributes.fechaInicio) <= selectedDate &&
+      new Date(horario.attributes.fechaFin) >= selectedDate
+    );
+  
+    const hours = [];
+    availableHorarios.forEach(horario => {
+      const startHour = parseInt(horario.attributes.horaInicio.split(':')[0]);
+      const endHour = parseInt(horario.attributes.horaFin.split(':')[0]);
+      for (let hour = startHour; hour < endHour; hour++) {
+        const hourString = `${hour.toString().padStart(2, '0')}:00`;
+        hours.push(hourString);
+      }
+    });
+  
+    // Filtrar las horas que ya tienen reserva
+    const dateString = selectedDate.toISOString().split('T')[0];
+    const reservedHours = reservas
+      .filter(reserva => 
+        reserva.attributes.fecha === dateString &&
+        reserva.attributes.prestador.data.id === parseInt(formData.prestador)
+      )
+      .map(reserva => reserva.attributes.hora.split(':')[0] + ':00');
+  
+    const availableHours = hours.filter(hour => !reservedHours.includes(hour));
+  
     setAvailableHours(availableHours);
   };
 
@@ -117,7 +157,6 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
   };
 
   const isDayFull = (date) => {
-    // Ensure date is a valid Date object
     const validDate = date instanceof Date ? date : new Date(date);
     
     if (isNaN(validDate.getTime())) {
@@ -129,18 +168,17 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
     
     const reservasDelDia = reservas?.filter(reserva =>
       reserva.attributes.fecha === dateString &&
-      reserva.attributes.prestador.data.id === formData.prestador
+      reserva.attributes.prestador.data.id === parseInt(formData.prestador)
     );
     
     return reservasDelDia?.length >= maxReservasPorDia;
   };
-
   const isHourReserved = (date, hour) => {
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = date instanceof Date ? date.toISOString().split('T')[0] : date;
     return reservas?.some(reserva =>
       reserva.attributes.fecha === dateString &&
       reserva.attributes.hora === hour &&
-      reserva.attributes.prestador.data.id === formData.prestador
+      reserva.attributes.prestador.data.id === parseInt(formData.prestador)
     );
   };
 
@@ -281,7 +319,7 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
             required
           >
             <option value="">Seleccionar hora</option>
-            {availableHours.map((hour) => (
+            {availableHours?.map((hour) => (
               <option key={hour} value={hour}>
                 {hour}
               </option>

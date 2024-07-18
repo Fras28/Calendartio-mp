@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -11,131 +11,89 @@ import {
   ModalCloseButton,
   useDisclosure,
   VStack,
-  HStack,
-  Input,
   Select,
   Text,
-  Checkbox,
 } from '@chakra-ui/react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-// Setup the localizer for react-big-calendar
-const localizer = momentLocalizer(moment);
-
-const DateTimePicker = () => {
-  const [events, setEvents] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+const DateTimePicker = ({ prestador }) => {
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [availableDates, setAvailableDates] = useState([]);
+  const [availableHours, setAvailableHours] = useState([]);
 
-  // Admin panel state
-  const [adminDate, setAdminDate] = useState('');
-  const [availableHours, setAvailableHours] = useState({
-    '09:00': false, '10:00': false, '11:00': false, '12:00': false,
-    '13:00': false, '14:00': false, '15:00': false, '16:00': false,
-    '17:00': false, '18:00': false,
-  });
+  useEffect(() => {
+    if (prestador && prestador.attributes?.horarios?.data) {
+      const dates = [];
+      prestador.attributes.horarios.data.forEach(horario => {
+        const { diaSemana, horaInicio, horaFin, fechaInicio, fechaFin, esRecurrente } = horario.attributes;
+        const start = moment(fechaInicio);
+        const end = moment(fechaFin);
 
-  const handleDateSelect = useCallback((slotInfo) => {
-    setSelectedDate(slotInfo.start);
-    setSelectedTime(null);
-  }, []);
-
-  const handleTimeSelect = (time) => {
-    setSelectedTime(time);
-  };
-
-  const toggleAvailableHour = (hour) => {
-    setAvailableHours(prev => ({...prev, [hour]: !prev[hour]}));
-  };
-
-  const addAvailability = () => {
-    if (adminDate) {
-      const newEvents = Object.entries(availableHours)
-        .filter(([_, isAvailable]) => isAvailable)
-        .map(([hour, _]) => ({
-          start: new Date(`${adminDate}T${hour}`),
-          end: new Date(`${adminDate}T${hour}`),
-          title: 'Available',
-        }));
-      
-      setEvents(prev => [...prev, ...newEvents]);
+        while (start.isSameOrBefore(end)) {
+          if (start.format('dddd') === diaSemana || !esRecurrente) {
+            dates.push({
+              date: start.format('YYYY-MM-DD'),
+              start: horaInicio,
+              end: horaFin,
+            });
+          }
+          start.add(1, 'days');
+        }
+      });
+      setAvailableDates(dates);
     }
+  }, [prestador]);
+
+  const handleDateSelect = (e) => {
+    const selected = e.target.value;
+    setSelectedDate(selected);
+    const hours = availableDates.filter(date => date.date === selected);
+    setAvailableHours(hours);
+    setSelectedTime('');
   };
 
-  const eventStyleGetter = (event, start, end, isSelected) => {
-    const style = {
-      backgroundColor: '#3174ad',
-      borderRadius: '0px',
-      opacity: 0.8,
-      color: 'white',
-      border: '0px',
-      display: 'block'
-    };
-    return {
-      style
-    };
+  const handleTimeSelect = (e) => {
+    setSelectedTime(e.target.value);
   };
 
   return (
     <Box>
       <VStack spacing={4} align="stretch">
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500 }}
-          onSelectSlot={handleDateSelect}
-          selectable
-          eventPropGetter={eventStyleGetter}
-        />
+        <Select placeholder="Seleccione una fecha" onChange={handleDateSelect} value={selectedDate}>
+          {availableDates.map((date, index) => (
+            <option key={index} value={date.date}>
+              {date.date}
+            </option>
+          ))}
+        </Select>
         {selectedDate && (
-          <Select placeholder="Select time" onChange={(e) => handleTimeSelect(e.target.value)} value={selectedTime || ''}>
-            {events
-              .filter(event => moment(event.start).isSame(selectedDate, 'day'))
-              .map((event, index) => (
-                <option key={index} value={moment(event.start).format('HH:mm')}>
-                  {moment(event.start).format('HH:mm')}
-                </option>
-              ))}
+          <Select placeholder="Seleccione una hora" onChange={handleTimeSelect} value={selectedTime}>
+            {availableHours.map((hour, index) => (
+              <option key={index} value={hour.start}>
+                {`${hour.start} - ${hour.end}`}
+              </option>
+            ))}
           </Select>
         )}
-        <Button onClick={onOpen}>Open Admin Panel</Button>
+        <Button onClick={onOpen} isDisabled={!selectedDate || !selectedTime}>
+          Ver fecha y hora seleccionadas
+        </Button>
       </VStack>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Admin Panel</ModalHeader>
+          <ModalHeader>Fecha y hora seleccionadas</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack spacing={4}>
-              <Input
-                type="date"
-                value={adminDate}
-                onChange={(e) => setAdminDate(e.target.value)}
-              />
-              <Text fontWeight="bold">Available Hours:</Text>
-              <VStack align="start">
-                {Object.entries(availableHours).map(([hour, isAvailable]) => (
-                  <Checkbox
-                    key={hour}
-                    isChecked={isAvailable}
-                    onChange={() => toggleAvailableHour(hour)}
-                  >
-                    {hour}
-                  </Checkbox>
-                ))}
-              </VStack>
-              <Button onClick={addAvailability}>Add Availability</Button>
-            </VStack>
+            <Text>Fecha: {selectedDate || 'No seleccionada'}</Text>
+            <Text>Hora: {selectedTime || 'No seleccionada'}</Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
+            <Button colorScheme="blue" onClick={onClose}>
+              Cerrar
             </Button>
           </ModalFooter>
         </ModalContent>

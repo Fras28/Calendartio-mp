@@ -4,6 +4,7 @@
 .App {
   text-align: center;
   background-color: "#88B9BF";
+
 }
 
 .App-logo {
@@ -56,6 +57,21 @@
 .css-1ef8uzr{
   align-items: center;
 }
+
+/* -------------------- LANDING ----------------- */
+.cont-landing{
+  padding: 1rem;
+  background-color: #E5B9D7;
+}
+
+
+
+
+
+
+
+
+
 /* --------------- calendario ------------- */
 
 .rojo {
@@ -182,6 +198,7 @@
 .nueva-reserva-container {
   padding: 20px;
   background-color: #f0f0f0;
+
 }
 
 .nueva-reserva-form {
@@ -256,6 +273,14 @@
 /* HeroSection.css */
 .boxHero {
   height: 70vh;
+  border-radius: 12px;
+    clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 50px),
+    50% 100%,
+    0 calc(100% - 50px)
+  );
 }
 
 .parallax-container {
@@ -264,18 +289,20 @@
   background-position: center;
   position: relative;
   display: block;
-  /* clip-path: polygon(
+  clip-path: polygon(
     0 0,
     100% 0,
     100% calc(100% - 50px),
     50% 100%,
     0 calc(100% - 50px)
-  ); */
+  );
   background-color:#88b9bf ;
 }
 
 .mobile-container {
   display: none;
+  border-radius: 12px;
+
 }
 
 @media (max-width: 768px) {
@@ -287,10 +314,14 @@
     display: block;
     width: 100%;
     height: 70vh;
+    border-radius: 12px;
+
   }
 
   .boxHero {
     height: auto;
+    border-radius: 12px;
+    clip-path: none;
   }
   .css-xj6ol9{
     width: 100vw;
@@ -302,7 +333,6 @@
 .bgPrestador {
   padding: 2rem;
   border-bottom: solid 2px #6E5F83;
-  background-color: #E5B9D7;
   position: relative;
 }
 
@@ -401,7 +431,6 @@ margin-top: 0 !important;
 }
 
 .card__avatar {
-  position: absolute;
   width: 114px;
   height: 114px;
   background: var(--bg-color);
@@ -419,7 +448,6 @@ margin-top: 0 !important;
 }
 
 .card__title {
-  margin-top: 150px;
   font-weight: 500;
   font-size: 18px;
   color: goldenrod;
@@ -466,7 +494,7 @@ margin-top: 0 !important;
 .modal {
   display: block;
   position: fixed;
-  z-index: 1;
+  z-index: 99;
   left: 0;
   top: 0;
   width: 100%;
@@ -563,13 +591,15 @@ margin-top: 0 !important;
   background-position: center;
   position: relative;
   display: block;
-  clip-path: polygon(
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  /* clip-path: polygon(
     0 0,
     100% 0,
     100% calc(100% - 50px),
     50% 100%,
     0 calc(100% - 50px)
-  );
+  ); */
 }
 
 
@@ -607,6 +637,11 @@ margin-top: 0 !important;
   box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 }
 
+
+.css-hxda7v{
+  border-radius: 12px;
+}
+
 @media (max-width: 750px) {
   .calendFechas {
     flex-direction: column;
@@ -627,6 +662,8 @@ margin-top: 0 !important;
   }
   .parallax-container {
     background-size: 100% auto; /* Ajusta la imagen de fondo al 100% del ancho del contenedor */
+    
+
   }
   .css-1d1wr0h{
     height: auto;
