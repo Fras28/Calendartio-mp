@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { loginUser } from '../redux/slice';
 import { Navigate } from 'react-router-dom';
+import InicioButton from '../InicioButton';
 
 export default function LoginCard() {
   const [email, setEmail] = useState('');
@@ -65,10 +66,11 @@ export default function LoginCard() {
     >
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
-          <Heading fontSize={'4xl'}>Sign in to your account</Heading>
+          <Heading fontSize={'4xl'}>Identificate</Heading>
           <Text fontSize={'lg'} color={textColor}>
-            to enjoy all of our cool <Text color={linkColor}>features</Text> ✌️
+          para difrutar al maximo el servicio ✌️
           </Text>
+        
         </Stack>
         <Box
           rounded={'lg'}
@@ -113,6 +115,7 @@ export default function LoginCard() {
               >
                 Sign in
               </Button>
+              <InicioButton/>
             </Stack>
           </Stack>
         </Box>

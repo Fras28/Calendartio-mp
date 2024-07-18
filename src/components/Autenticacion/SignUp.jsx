@@ -7,19 +7,18 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  HStack,
   InputRightElement,
   Stack,
   Button,
   Heading,
   Text,
-  Link,
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { registerUser } from '../redux/slice';
-
+import { Navigate, NavLink } from 'react-router-dom';
+import InicioButton from '../InicioButton';
 
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +29,10 @@ export default function SignupCard() {
   const dispatch = useDispatch();
   const toast = useToast();
   const status = useSelector((state) => state.reservas.status);
+  const [RegisterSuccess, setRegisterSuccess] = useState(false);
+
+  const bgValue = useColorModeValue('gray.50', 'gray.800');
+  const boxBgValue = useColorModeValue('white', 'gray.700');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,6 +50,7 @@ export default function SignupCard() {
         duration: 5000,
         isClosable: true,
       });
+      setRegisterSuccess(true)
     } catch (error) {
       toast({
         title: 'Registration failed.',
@@ -58,12 +62,16 @@ export default function SignupCard() {
     }
   };
 
+  if (RegisterSuccess) {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <Flex
       minH={'100vh'}
       align={'center'}
       justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}>
+      bg={bgValue}>
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
@@ -75,7 +83,7 @@ export default function SignupCard() {
         </Stack>
         <Box
           rounded={'lg'}
-          bg={useColorModeValue('white', 'gray.700')}
+          bg={boxBgValue}
           boxShadow={'lg'}
           p={8}>
           <Stack spacing={4} as="form" onSubmit={handleSubmit}>
@@ -122,12 +130,13 @@ export default function SignupCard() {
               >
                 Sign up
               </Button>
+              <InicioButton/>
             </Stack>
             <Stack pt={6}>
               <Text align={'center'}>
-                Already a user? <Link color={'blue.400'}>Login</Link>
+                Already a user? <NavLink  to="/login" color={'blue.400'}>Login</NavLink>
               </Text>
-            </Stack>
+            </Stack>                                    
           </Stack>
         </Box>
       </Stack>

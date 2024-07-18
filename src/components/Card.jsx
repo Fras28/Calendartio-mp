@@ -37,7 +37,7 @@ const Card = ({ prestador, idPrestador }) => {
         <RadioGroup onChange={handlePriceChange} value={selectedPrice}>
           {prestador?.valors.data.map(valor => (
             <div key={valor.id}  style={{color:"wheat", borderBottom:"dashed 1px wheat", padding:"4px"}} className='titMai'>
-              <Radio value={JSON.stringify(valor.attributes)} ><b>{valor.attributes.nombre} <br/> </b>  ${valor.attributes.precio} {valor.attributes.tiempo? <div><b>duración:</b> valor.attributes.tiempo'</div> :null}</Radio>
+              <Radio value={JSON.stringify(valor.attributes)} ><b>{valor.attributes.nombre} <br/> </b>  ${valor.attributes.precio} {valor.attributes.tiempo? <div><b>duración:</b> {valor.attributes.tiempo}`</div> :null}</Radio>
             </div>
           ))}
         </RadioGroup>
