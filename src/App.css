@@ -112,6 +112,50 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+/* Estilos para el calendario */
+.date-unavailable {
+  background-color: #ffcccc !important;
+  color: #666 !important;
+  border-radius: 0.3rem;
+}
+
+.date-available {
+  border: 2px solid #87CEFA !important;
+  border-radius: 0.3rem;
+}
+
+.react-datepicker__day--selected {
+  background-color: #216ba5 !important;
+  color: white !important;
+}
+
+/* Estilos para el selector de horas */
+
+
+.hora-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.hora-opcion {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hora-opcion:hover {
+  background-color: #f0f0f0;
+}
+
+.hora-seleccionada {
+  border: 2px solid #87CEFA;
+  background-color: #e6f7ff;
+}
+
 .nueva-reserva-container h1,
 .calendario-container h1 {
   text-align: center;
@@ -535,6 +579,13 @@ margin-top: 0 !important;
   display: none;
 }
 
+
+.css-cs9aj7 {
+  gap: var(--chakra-space-10);
+  background-color: #88b9bf6e;
+  padding: 1rem;
+  border-radius: 12px;
+}
 /* ---------------------- Testimonion ----------------- */
 /* Testim.css */
 .testim-parallax-bg {

@@ -11,13 +11,13 @@ const initialState = {
   prestadores: [],
   reservas: [],
   comercio: null,
-  horariosPrestador: [],
+  horariosPrestador: {},
   status: 'idle',
   error: null,
 };
 export const fetchPrestadores = createAsyncThunk('reservas/fetchPrestadores', async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/prestadores?populate=avatar&populate=fondoPerfil&populate=valors&populate=horarios`);
+    const response = await axios.get(`${API_URL}/api/prestadores?populate=avatar&populate=fondoPerfil&populate=valors&populate=horarios&populate=reservas`);
     return response.data;
   } catch (error) {
     console.error('Error fetching prestadores:', error);
@@ -104,17 +104,32 @@ export const registerUser = createAsyncThunk('user/register', async (userData) =
 
 
 
-
 export const fetchHorariosPrestador = createAsyncThunk(
   'reservas/fetchHorariosPrestador',
-  async (prestadorId) => {
-    try {
-      const response = await axios.get(`${API_URL}/api/horarios?filters[prestador][id][$eq]=${prestadorId}&populate=*`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching horarios del prestador:', error);
-      throw error;
+  async (prestadorId, { getState }) => {
+    const state = getState();
+    const token = state.reservas.token;
+
+    if (!token) {
+      throw new Error('No se encontró el token de autenticación');
     }
+
+    const response = await fetch(`${API_URL}/api/horarios?populate=*&filters[prestadors][id][$eq]=${prestadorId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error.message || 'Error al obtener los horarios');
+    }
+
+    const data = await response.json();
+    console.log('Datos recibidos del backend:', data);
+    return { prestadorId, horarios: data.data };
   }
 );
 
@@ -259,7 +274,7 @@ export const addHorariosPrestador = createAsyncThunk(
         throw new Error('No se encontró el token de autenticación');
       }
 
-      // Primero, creamos los nuevos horarios
+      // Creamos los nuevos horarios
       const createdHorarios = await Promise.all(horarios.map(async horario => {
         const response = await axios.post(
           `${API_URL}/api/horarios`,
@@ -270,7 +285,10 @@ export const addHorariosPrestador = createAsyncThunk(
               horaFin: horario.horaFin,
               fechaInicio: horario.fechaInicio,
               fechaFin: horario.fechaFin,
-              esRecurrente: horario.esRecurrente
+              esRecurrente: horario.esRecurrente,
+              prestadors: {
+                connect: [prestadorId] // Usamos 'connect' para asociar con un prestador existente
+              }
             } 
           },
           {
@@ -283,67 +301,45 @@ export const addHorariosPrestador = createAsyncThunk(
         return response.data.data;
       }));
 
-      // Luego, actualizamos el prestador para incluir los nuevos horarios
-      const prestadorResponse = await axios.get(
-        `${API_URL}/api/prestadores/${prestadorId}?populate=horarios`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      const prestador = prestadorResponse.data.data;
-      const existingHorariosIds = prestador.attributes.horarios.data.map(h => h.id);
-      const newHorariosIds = createdHorarios.map(h => h.id);
-      const updatedHorariosIds = [...existingHorariosIds, ...newHorariosIds];
-
-      await axios.put(
-        `${API_URL}/api/prestadores/${prestadorId}`,
-        {
-          data: {
-            horarios: updatedHorariosIds
-          }
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      // Finalmente, obtenemos los horarios actualizados del prestador
-      const updatedHorariosResponse = await axios.get(
-        `${API_URL}/api/prestadores/${prestadorId}?populate=horarios`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      return updatedHorariosResponse.data.data.attributes.horarios.data;
+      // Actualizamos los horarios del prestador en el estado
+      return { prestadorId, horarios: createdHorarios };
     } catch (error) {
-      console.error('Error adding horarios del prestador:', error);
-      throw error;
+      if (error.response && error.response.data && error.response.data.error) {
+        throw new Error(error.response.data.error.message);
+      } else {
+        throw error;
+      }
     }
   }
 );
 
 export const deleteHorarioPrestador = createAsyncThunk(
   'reservas/deleteHorarioPrestador',
-  async ({ prestadorId, horarioId }) => {
+  async ({ prestadorId, horarioId }, { getState, rejectWithValue }) => {
     try {
-      // Eliminamos el horario específico
-      await axios.delete(`${API_URL}/api/horarios/${horarioId}`);
-      
-      // Obtenemos los horarios actualizados del prestador
-      const response = await axios.get(`${API_URL}/api/horarios?filters[prestador][id][$eq]=${prestadorId}&populate=*`);
-      return response.data;
+      const state = getState();
+      const token = state.reservas.token;
+
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
+
+      const response = await fetch(`${API_URL}/api/horarios/${horarioId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(errorData.error.message || 'Error al eliminar el horario');
+      }
+
+      return { prestadorId, horarioId };
     } catch (error) {
-      console.error('Error deleting horario del prestador:', error);
-      throw error;
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -385,6 +381,7 @@ const reservasSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
+      
       .addCase(fetchReservas.pending, (state) => {
         state.status = 'loading';
       })
@@ -464,11 +461,20 @@ const reservasSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(fetchHorariosPrestador.fulfilled, (state, action) => {
-        state.horariosPrestador = action.payload.data;
+        console.log('Actualizando horariosPrestador:', action.payload);
+        state.horariosPrestador[action.payload.prestadorId] = action.payload.horarios;
+      })
+      .addCase(fetchHorariosPrestador.rejected, (state, action) => {
+        console.error('Error al obtener horarios:', action.error);
+        // Puedes manejar el error aquí si lo deseas
       })
       .addCase(addHorariosPrestador.fulfilled, (state, action) => {
-        const { prestadorId } = action.meta.arg;
-        state.horariosPrestador[prestadorId] = action.payload;
+        const { prestadorId, horarios } = action.payload;
+        console.log('Añadiendo nuevos horarios:', horarios);
+        if (!state.horariosPrestador[prestadorId]) {
+          state.horariosPrestador[prestadorId] = [];
+        }
+        state.horariosPrestador[prestadorId].push(...horarios);
       })
       .addCase(addHorariosPrestador.rejected, (state, action) => {
         state.status = 'failed';
@@ -478,14 +484,16 @@ const reservasSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(deleteHorarioPrestador.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        // Actualizamos los horarios del prestador en el estado
-        const prestadorId = action.meta.arg.prestadorId;
-        state.horariosPrestador[prestadorId] = action.payload.data;
+        const { prestadorId, horarioId } = action.payload;
+        if (state.horariosPrestador[prestadorId]) {
+          state.horariosPrestador[prestadorId] = state.horariosPrestador[prestadorId].filter(
+            (horario) => horario.id !== horarioId
+          );
+        }
       })
       .addCase(deleteHorarioPrestador.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        console.error('Error al eliminar horario:', action.payload);
+        // Puedes manejar el error aquí si lo deseas
       });
   },
 });
