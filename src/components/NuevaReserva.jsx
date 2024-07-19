@@ -32,8 +32,8 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
     fecha: "",
     hora: "",
     prestador: prestador ? prestador.idPrestador : "",
-    precio: selectedPrice.precio,
-    duracion: selectedPrice.tiempo,
+    precio: selectedPrice?.precio,
+    duracion: selectedPrice?.tiempo,
   };
 
   const [formData, setFormData] = useState(initialFormData);
