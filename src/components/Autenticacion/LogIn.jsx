@@ -80,7 +80,7 @@ export default function LoginCard() {
         >
           <Stack spacing={4} as="form" onSubmit={handleSubmit}>
             <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
+              <FormLabel>Email</FormLabel>
               <Input
                 type="email"
                 value={email}
@@ -88,7 +88,7 @@ export default function LoginCard() {
               />
             </FormControl>
             <FormControl id="password">
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Contraseña</FormLabel>
               <Input
                 type="password"
                 value={password}
@@ -101,8 +101,8 @@ export default function LoginCard() {
                 align={'start'}
                 justify={'space-between'}
               >
-                <Checkbox>Remember me</Checkbox>
-                <Text color={linkColor}>Forgot password?</Text>
+                {/* <Checkbox>Remember me</Checkbox>
+                <Text color={linkColor}>Forgot password?</Text> */}
               </Stack>
               <Button
                 type="submit"
@@ -113,7 +113,7 @@ export default function LoginCard() {
                 }}
                 isLoading={status === 'loading'}
               >
-                Sign in
+                Acceder
               </Button>
               <InicioButton/>
             </Stack>
