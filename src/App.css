@@ -506,8 +506,7 @@ margin-top: 0 !important;
 
 .card__btn {
   margin-top: 15px;
-  width: 76px;
-  height: 31px;
+  padding: .5rem;
   border: 2px solid var(--main-color);
   border-radius: 4px;
   font-weight: 700;
