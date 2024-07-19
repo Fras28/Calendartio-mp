@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import NuevaReserva from "./NuevaReserva"; // Importa el componente de NuevaReserva aquí
 import { Button, Checkbox, Radio, RadioGroup } from "@chakra-ui/react";
 import { BsFillPersonPlusFill } from "react-icons/bs";
+import Avatar from "./assets/avatarMaia.png"
+import bgCard from "./assets/BackCard.jpg"
 
 const API_URL = process.env.REACT_APP_API_URL;
 const COMERCIO_ID = process.env.REACT_APP_COMERCIO_ID;
@@ -38,16 +40,24 @@ const Card = ({ prestador, idPrestador }) => {
     <div ref={cardRef} className={`card ${isFlipped ? "flipped" : ""}`}>
       <div className="card__front">
         <div className="card__img">
-          <img
-            src={`${API_URL}${prestador?.fondoPerfil?.data?.attributes?.url}`}
+        <img
+            src={bgCard}
             alt="Card Image"
           />
+          {/* <img
+            src={`${API_URL}${prestador?.fondoPerfil?.data?.attributes?.url}`}
+            alt="Card Image"
+          /> */}
         </div>
         <div className="card__avatar">
-          <img
-            src={`${API_URL}${prestador?.avatar?.data?.attributes?.url}`}
+        <img
+            src={Avatar}
             alt="Avatar"
           />
+          {/* <img
+            src={`${API_URL}${prestador?.avatar?.data?.attributes?.url}`}
+            alt="Avatar"
+          /> */}
         </div>
         <div className="card__title titMai">{prestador?.nombre}</div>
         <div className="card__subtitle">
