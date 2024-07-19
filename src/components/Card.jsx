@@ -26,18 +26,18 @@ const Card = ({ prestador, idPrestador }) => {
   return (
     <div className="card">
       <div className="card__img">
-        <img src={`${API_URL}${prestador?.fondoPerfil.data.attributes.url}`} alt="Card Image" />
+        <img src={`${API_URL}${prestador?.fondoPerfil?.data?.attributes?.url}`} alt="Card Image" />
       </div>
       <div className="card__avatar">
-        <img src={`${API_URL}${prestador?.avatar.data.attributes.url}`} alt="Avatar" />
+        <img src={`${API_URL}${prestador?.avatar?.data?.attributes?.url}`} alt="Avatar" />
       </div>
       <div className="card__title titMai">{prestador?.nombre}</div>
       <div className="card__subtitle">{prestador?.servicio?.length > 3 ? prestador?.servicio : null}</div>
       <div className="card__prices">
         <RadioGroup onChange={handlePriceChange} value={selectedPrice}>
-          {prestador?.valors.data.map(valor => (
-            <div key={valor.id}  style={{color:"wheat", borderBottom:"dashed 1px wheat", padding:"4px"}} className='titMai'>
-              <Radio value={JSON.stringify(valor.attributes)} ><b>{valor.attributes.nombre} <br/> </b>  ${valor.attributes.precio} {valor.attributes.tiempo? <div><b>duración:</b> {valor.attributes.tiempo}`</div> :null}</Radio>
+          {prestador?.valors?.data.map(valor => (
+            <div key={valor?.id}  style={{color:"wheat", borderBottom:"dashed 1px wheat", padding:"4px"}} className='titMai'>
+              <Radio value={JSON.stringify(valor?.attributes)} ><b>{valor?.attributes?.nombre} <br/> </b>  ${valor?.attributes?.precio} {valor?.attributes?.tiempo? <div><b>duración:</b> {valor?.attributes?.tiempo}`</div> :null}</Radio>
             </div>
           ))}
         </RadioGroup>
