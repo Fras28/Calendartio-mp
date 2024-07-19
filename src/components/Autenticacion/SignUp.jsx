@@ -75,10 +75,10 @@ export default function SignupCard() {
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
-            Sign up
+            Regístrate
           </Heading>
           <Text fontSize={'lg'} color={'gray.600'}>
-            to enjoy all of our cool features ✌️
+           Para disfrutar al maximo nuestra web ✌️
           </Text>
         </Stack>
         <Box
@@ -88,15 +88,15 @@ export default function SignupCard() {
           p={8}>
           <Stack spacing={4} as="form" onSubmit={handleSubmit}>
             <FormControl id="username" isRequired>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Usuario</FormLabel>
               <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
             </FormControl>
             <FormControl id="email" isRequired>
-              <FormLabel>Email address</FormLabel>
+              <FormLabel>Email</FormLabel>
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </FormControl>
             <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Contraseña</FormLabel>
               <InputGroup>
                 <Input 
                   type={showPassword ? 'text' : 'password'} 
@@ -113,7 +113,7 @@ export default function SignupCard() {
               </InputGroup>
             </FormControl>
             <FormControl id="telefono" isRequired>
-              <FormLabel>Telephone</FormLabel>
+              <FormLabel>Telefono</FormLabel>
               <Input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
             </FormControl>
             <Stack spacing={10} pt={2}>
@@ -128,13 +128,13 @@ export default function SignupCard() {
                 }}
                 isLoading={status === 'loading'}
               >
-                Sign up
+                Registrar
               </Button>
               <InicioButton/>
             </Stack>
             <Stack pt={6}>
               <Text align={'center'}>
-                Already a user? <NavLink  to="/login" color={'blue.400'}>Login</NavLink>
+               Ya estas registrado ? <NavLink  to="/login" style={{color:"#3182CE"}}>Identificarme</NavLink>
               </Text>
             </Stack>                                    
           </Stack>

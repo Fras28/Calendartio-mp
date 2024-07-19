@@ -33,40 +33,40 @@ import {
 import { logout } from '../redux/slice';
 
 const NAV_ITEMS = [
-  {
-    label: 'Inspiration',
-    children: [
-      {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
-        href: '#',
-      },
-      {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Find Work',
-    children: [
-      {
-        label: 'Job Board',
-        subLabel: 'Find your dream design job',
-        href: '#',
-      },
-      {
-        label: 'Freelance Projects',
-        subLabel: 'An exclusive list for contract work',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Learn Design',
-    href: '#',
-  },
+  // {
+  //   label: 'Inspiration',
+  //   children: [
+  //     {
+  //       label: 'Explore Design Work',
+  //       subLabel: 'Trending Design to inspire you',
+  //       href: '#',
+  //     },
+  //     {
+  //       label: 'New & Noteworthy',
+  //       subLabel: 'Up-and-coming Designers',
+  //       href: '#',
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: 'Find Work',
+  //   children: [
+  //     {
+  //       label: 'Job Board',
+  //       subLabel: 'Find your dream design job',
+  //       href: '#',
+  //     },
+  //     {
+  //       label: 'Freelance Projects',
+  //       subLabel: 'An exclusive list for contract work',
+  //       href: '#',
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: 'Learn Design',
+  //   href: '#',
+  // },
 ];
 
 const DesktopNav = () => {
@@ -237,17 +237,7 @@ const WithSubnavigation = () => {
         borderStyle={'solid'}
         borderColor={useColorModeValue('#6E5E84', '#6E5E84')}
         align={'center'}>
-        <Flex
-          flex={{ base: 1, md: 'auto' }}
-          ml={{ base: -2 }}
-          display={{ base: 'flex', md: 'none' }}>
-          <IconButton
-            onClick={onToggle}
-            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
-            variant={'ghost'}
-            aria-label={'Toggle Navigation'}
-          />
-        </Flex>
+       
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
           <img src={Logo} style={{ height: "80px" }} alt="Logo" />
           
@@ -296,29 +286,31 @@ const WithSubnavigation = () => {
           ) : (
             <>
               <Button as={Link} to="/login" fontSize={'sm'} fontWeight={400} variant={'link'} color={"#6C442B"}>
-                Sign In
+                Ingresar
               </Button>
               <Button
                 as={Link}
                 to="/register"
-                display={{ base: 'none', md: 'inline-flex' }}
+                display={{ base: 'inline-flex', md: 'inline-flex' }}
                 fontSize={'sm'}
                 fontWeight={600}
-                color={'#88B9BF'}
-                style={{ backgroundColor: "#6E5E84", border: "solid #2E1F13 4px", borderRadius: "12px" }}
+                bgColor="#6E5E84"
+                border="dashed #2E1F13 4px"
+                color="#88B9BF"
                 _hover={{
-                  bg: 'pink.300',
-                }}>
-                Sign Up
+                  border: "solid #2E1F13 4px",
+                }}
+                >
+                Registrarte
               </Button>
             </>
           )}
         </Stack>
       </Flex>
 
-      <Collapse in={isOpen} animateOpacity>
+      {/* <Collapse in={isOpen} animateOpacity>
         <MobileNav />
-      </Collapse>
+      </Collapse> */}
     </Box>
   );
 };

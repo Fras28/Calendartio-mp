@@ -5,6 +5,8 @@ import Historia from "./Historia";
 import Testim from "./Testimonios1";
 import LargeWithAppLinksAndSocial from "../Foot";
 import { BiBorderRadius } from "react-icons/bi";
+import SignInBtn from "../Autenticacion/signInBtn";
+import LogInBtn from "../Autenticacion/LogInBtn";
 
 
 
@@ -19,9 +21,14 @@ const Landing =()=>{
         <HeroSection style={{BiBorderRadius:"12px"}}/>
         <Historia/>
         <Testim/>
+        <div style={{display:"flex", width:"100%", justifyContent:"center", alignItems:"center", padding:"1rem", gap:"2rem"}}>
+        <SignInBtn/>
+        <LogInBtn/>
+        </div>
 </div>
 
         <LargeWithAppLinksAndSocial/>
+    
         </div>
   
     )

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Parallax } from 'react-parallax';
-import { Box, Button, Heading, Text, useMediaQuery } from '@chakra-ui/react';
-import { BiBasket } from 'react-icons/bi';
+import React, { useState, useEffect } from "react";
+import { Parallax } from "react-parallax";
+import { Box, Button, Heading, Text, useMediaQuery } from "@chakra-ui/react";
+import { BiBasket } from "react-icons/bi";
 import bgImg from "../assets/fondo.jpg";
-import Prestadores from '../Prestadores';
-import NuevaReserva from '../NuevaReserva';
-import Logo from "../assets/VARIANTE-11.png"
+import Prestadores from "../Prestadores";
+import NuevaReserva from "../NuevaReserva";
+import Logo from "../assets/VARIANTE-11.png";
 
 const HeroSection = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,25 +20,50 @@ const HeroSection = () => {
   };
 
   const content = (
-    <Box className='boxHero' display="flex" justifyContent="center" alignItems="center" bg="rgba(0, 0, 0, 0.5)" minH="70vh">
+    <Box
+      className="boxHero"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      bg="rgba(0, 0, 0, 0.5)"
+      minH="70vh"
+    >
       <Box textAlign="center" color="white" position="relative">
         <Heading
           as="h1"
           size="2xl"
           mb="4"
-          sx={{ 
+          sx={{
             WebkitTextStroke: "2px #2e1f13",
             fontFamily: "Berkshire Swash, serif",
-            display:"flex",
-            justifyContent:"center"
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          <img src={Logo} alt="Logo" width="30%" style={{backgroundColor:"#000000b5", borderRadius:"50%"}} className='buttonHero'/>
+          <img
+            src={Logo}
+            alt="Logo"
+            width="30%"
+            style={{ backgroundColor: "#000000b5", borderRadius: "50%" }}
+            className="buttonHero"
+          />
         </Heading>
-        <Text fontSize="32px" mb="6" className='titMai'>
+        <Text fontSize="32px" mb="6" className="titMai">
           Maia Magical World
         </Text>
-        <Button  style={{backgroundColor:"#88B9BF", border:"solid #6E5E84 4px", borderRadius:"12px", color:"#6E5E84" }} size="lg" leftIcon={<BiBasket />} onClick={openModal}>
+        <Button
+          bgColor="#6E5E84"
+          border="dashed #2E1F13 4px"
+          color="#88B9BF"
+          _hover={{
+            bgColor: "#88B9BF",
+            color: "#6E5E84",
+            border: "solid #6E5E84 4px",
+          }}
+          size="lg"
+          leftIcon={<BiBasket />}
+          onClick={openModal}
+        >
           Hacer Reserva
         </Button>
         <Text fontSize="l" mb="6">
@@ -52,7 +77,7 @@ const HeroSection = () => {
     <>
       {isMobile ? (
         <Box
-          className='mobile-container'
+          className="mobile-container"
           bgImage={`url(${bgImg})`}
           bgSize="cover"
           bgPos="center"
@@ -68,16 +93,16 @@ const HeroSection = () => {
           bgImage={bgImg}
           strength={500}
           bgImageStyle={{
-            left: '50%',
-            transform: 'translate3d(-50%, -53.1804px, 0px)',
-            transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden',
-            minHeight: '28vh',
-            height: 'auto',
-            width: '1920px',
-            filter: 'none',
+            left: "50%",
+            transform: "translate3d(-50%, -53.1804px, 0px)",
+            transformStyle: "preserve-3d",
+            backfaceVisibility: "hidden",
+            minHeight: "28vh",
+            height: "auto",
+            width: "1920px",
+            filter: "none",
           }}
-          className='parallax-container'
+          className="parallax-container"
         >
           {content}
         </Parallax>
@@ -88,7 +113,9 @@ const HeroSection = () => {
       {modalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={closeModal}>&times;</span>
+            <span className="close" onClick={closeModal}>
+              &times;
+            </span>
             <NuevaReserva />
           </div>
         </div>
@@ -98,4 +125,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-
