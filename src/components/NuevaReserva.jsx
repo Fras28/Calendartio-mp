@@ -25,7 +25,10 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
     console.error("Error parsing precio:", error);
     selectedPrice = { precio: 0, tiempo: 0 };
   }
-
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
+  
   const initialFormData = {
     nombreCliente: user ? user.username : "",
     email: user ? user.email : "",
@@ -125,7 +128,7 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
       }
     }
     setAvailableDates(dates);
-    setUnavailableDates(unavailableDates);
+
   };
 
   const updateAvailableHours = () => {
