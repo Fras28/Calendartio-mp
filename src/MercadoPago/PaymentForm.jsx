@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const YOUR_PUBLIC_KEY = process.env.REACT_APP_PUBLIC_KEY_MP;
+const API_BACK = process.env.REACT_APP_API_URL;
 
 const CheckoutPro = ({ info, onPaymentSuccess }) => {
   const comercio = useSelector((state) => state.reservas.comercio);
@@ -32,7 +33,7 @@ const CheckoutPro = ({ info, onPaymentSuccess }) => {
     if (!isSDKReady) return;
 
     try {
-      const response = await fetch('http://localhost:1337/api/mercadopago/create-preference', {
+      const response = await fetch(`${API_BACK}/api/mercadopago/create-preference`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
