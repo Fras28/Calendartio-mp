@@ -31,7 +31,7 @@ const CheckoutPro = ({ info, onPaymentSuccess }) => {
 
   const handlePayment = async () => {
     if (!isSDKReady) return;
-
+ 
     try {
       const response = await fetch(`${API_BACK}/api/mercadopago/create-preference`, {
         method: 'POST',
