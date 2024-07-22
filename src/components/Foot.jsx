@@ -31,6 +31,7 @@ const SocialButton = ({ children, label, href }) => {
       w={8}
       h={8}
       cursor={'pointer'}
+       target="_blank"
       as={'a'}
       href={href}
       display={'inline-flex'}
@@ -123,7 +124,7 @@ const LargeWithAppLinksAndSocial = () => {
             <SocialButton label={'YouTube'} href={'#'}>
               <FaYoutube />
             </SocialButton>
-            <SocialButton label={'Instagram'} href={'#'}>
+            <SocialButton label={'Instagram'} href={'https://www.instagram.com/maia.magical.world/'} target="_blank">
               <FaInstagram />
             </SocialButton>
           </Stack>

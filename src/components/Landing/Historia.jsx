@@ -40,7 +40,7 @@ export default function Historia() {
                 position: "absolute",
                 bottom: 1,
                 left: 0,
-                bg: "#e5b9d7",
+         
                 zIndex: -1,
               }}
               className='titMai'

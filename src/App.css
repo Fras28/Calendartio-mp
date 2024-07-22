@@ -4,6 +4,7 @@
 .App {
   text-align: center;
   background-color: "#88B9BF";
+
 }
 
 .App-logo {
@@ -56,6 +57,21 @@
 .css-1ef8uzr{
   align-items: center;
 }
+
+/* -------------------- LANDING ----------------- */
+.cont-landing{
+  padding: 1rem;
+  background-color: #E5B9D7;
+}
+
+
+
+
+
+
+
+
+
 /* --------------- calendario ------------- */
 
 .rojo {
@@ -96,6 +112,50 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+/* Estilos para el calendario */
+.date-unavailable {
+  background-color: #ffcccc !important;
+  color: #666 !important;
+  border-radius: 0.3rem;
+}
+
+.date-available {
+  border: 2px solid #87CEFA !important;
+  border-radius: 0.3rem;
+}
+
+.react-datepicker__day--selected {
+  background-color: #216ba5 !important;
+  color: white !important;
+}
+
+/* Estilos para el selector de horas */
+
+
+.hora-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.hora-opcion {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hora-opcion:hover {
+  background-color: #f0f0f0;
+}
+
+.hora-seleccionada {
+  border: 2px solid #87CEFA;
+  background-color: #e6f7ff;
+}
+
 .nueva-reserva-container h1,
 .calendario-container h1 {
   text-align: center;
@@ -221,6 +281,7 @@
 .nueva-reserva-container {
   padding: 20px;
   background-color: #f0f0f0;
+
 }
 
 .nueva-reserva-form {
@@ -229,7 +290,7 @@
 }
 
 .nueva-reserva-form div {
-  margin-bottom: 15px;
+  margin-bottom: .5rem;
 }
 
 .nueva-reserva-form label {
@@ -295,6 +356,14 @@
 /* HeroSection.css */
 .boxHero {
   height: 70vh;
+  border-radius: 12px;
+    clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 50px),
+    50% 100%,
+    0 calc(100% - 50px)
+  );
 }
 
 .parallax-container {
@@ -303,18 +372,20 @@
   background-position: center;
   position: relative;
   display: block;
-  /* clip-path: polygon(
+  clip-path: polygon(
     0 0,
     100% 0,
     100% calc(100% - 50px),
     50% 100%,
     0 calc(100% - 50px)
-  ); */
+  );
   background-color:#88b9bf ;
 }
 
 .mobile-container {
   display: none;
+  border-radius: 12px;
+
 }
 
 @media (max-width: 768px) {
@@ -326,10 +397,14 @@
     display: block;
     width: 100%;
     height: 70vh;
+    border-radius: 12px;
+
   }
 
   .boxHero {
     height: auto;
+    border-radius: 12px;
+    clip-path: none;
   }
   .css-xj6ol9{
     width: 100vw;
@@ -341,7 +416,6 @@
 .bgPrestador {
   padding: 2rem;
   border-bottom: solid 2px #6E5F83;
-  background-color: #E5B9D7;
   position: relative;
 }
 
@@ -424,6 +498,7 @@ margin-top: 0 !important;
   );
   padding-bottom: .5rem;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  perspective: 1000px;
 }
 
 .card__img {
@@ -440,7 +515,6 @@ margin-top: 0 !important;
 }
 
 .card__avatar {
-  position: absolute;
   width: 114px;
   height: 114px;
   background: var(--bg-color);
@@ -458,7 +532,6 @@ margin-top: 0 !important;
 }
 
 .card__title {
-  margin-top: 150px;
   font-weight: 500;
   font-size: 18px;
   color: goldenrod;
@@ -473,8 +546,7 @@ margin-top: 0 !important;
 
 .card__btn {
   margin-top: 15px;
-  width: 76px;
-  height: 31px;
+  padding: .5rem;
   border: 2px solid var(--main-color);
   border-radius: 4px;
   font-weight: 700;
@@ -505,7 +577,7 @@ margin-top: 0 !important;
 .modal {
   display: block;
   position: fixed;
-  z-index: 1;
+  z-index: 99;
   left: 0;
   top: 0;
   width: 100%;
@@ -541,11 +613,67 @@ margin-top: 0 !important;
   cursor: pointer;
 }
 
+
+
+
+.card {
+  perspective: 1000px;
+}
+
+.card__front, .card__back {
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transition: transform 0.6s;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.card__front {
+  transform: rotateY(0deg);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.card__back {
+  transform: rotateY(180deg);
+}
+
+.card.flipped .card__front {
+  transform: rotateY(-180deg);
+}
+
+.card.flipped .card__back {
+  transform: rotateY(0deg);
+}
+.card {
+  position: relative;
+  width: 350px;
+  height: 700px;
+
+}
+
+
+
+
+
+
+
+
 /* ------------------- HISTORIA ----------------------- */
 .LogoWebHistoria{
   display: none;
 }
 
+
+.css-cs9aj7 {
+  gap: var(--chakra-space-10);
+  background-color: #88b9bf6e;
+  padding: 1rem;
+  border-radius: 12px;
+}
 /* ---------------------- Testimonion ----------------- */
 /* Testim.css */
 .testim-parallax-bg {
@@ -602,13 +730,15 @@ margin-top: 0 !important;
   background-position: center;
   position: relative;
   display: block;
-  clip-path: polygon(
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  /* clip-path: polygon(
     0 0,
     100% 0,
     100% calc(100% - 50px),
     50% 100%,
     0 calc(100% - 50px)
-  );
+  ); */
 }
 
 
@@ -646,6 +776,11 @@ margin-top: 0 !important;
   box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 }
 
+
+.css-hxda7v{
+  border-radius: 12px;
+}
+
 @media (max-width: 750px) {
   .calendFechas {
     flex-direction: column;
@@ -666,6 +801,8 @@ margin-top: 0 !important;
   }
   .parallax-container {
     background-size: 100% auto; /* Ajusta la imagen de fondo al 100% del ancho del contenedor */
+    
+
   }
   .css-1d1wr0h{
     height: auto;

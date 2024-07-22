@@ -4,8 +4,11 @@ import { createReserva } from "./redux/slice";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
 import CheckoutPro from "../MercadoPago/PaymentForm";
+import classNames from "classnames";
+
 
 const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
+  console.log(prestador);
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.reservas?.user);
   const reservas = useSelector((state) => state?.reservas?.reservas?.data);
@@ -53,6 +56,7 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
         ))}
       </div>
     );
+
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -62,49 +66,81 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
 
   useEffect(() => {
     updateAvailableDates();
-  }, [formData.prestador, reservas]);
+  }, [formData.prestador, reservas, prestadores]);
 
   useEffect(() => {
-    updateAvailableHours();
-  }, [formData.fecha, formData.prestador, reservas]);
+    if (formData.fecha && formData.prestador) {
+      updateAvailableHours();
+    }
+  }, [formData.fecha, formData.prestador]);
 
   const updateAvailableDates = () => {
     if (!formData.prestador) return;
 
+
+    const selectedPrestador = prestadores.find(
+      (p) => p.id === parseInt(formData.prestador)
+    );
+    if (!selectedPrestador) return;
+
+
     const today = new Date();
     const dates = [];
+    const unavailableDates = [];
+
     for (let i = 0; i < 30; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
+
       if (date.getDay() !== 0) {
         // Excluye los domingos
         if (!isDayFull(date)) {
+
           dates.push(date);
         }
       }
     }
     setAvailableDates(dates);
+    setUnavailableDates(unavailableDates);
   };
 
   const updateAvailableHours = () => {
     if (!formData.prestador || !formData.fecha) return;
 
-    const hours = [
-      "08:00",
-      "09:00",
-      "10:00",
-      "11:00",
-      "12:00",
-      "13:00",
-      "16:00",
-      "17:00",
-      "18:00",
-      "19:00",
-      "20:00",
-    ];
-    const availableHours = hours.filter(
-      (hour) => !isHourReserved(formData.fecha, `${hour}:00.000`)
-    );
+  
+    const selectedPrestador = prestadores.find(p => p.id === parseInt(formData.prestador));
+    if (!selectedPrestador) return;
+  
+    const selectedDate = new Date(formData.fecha);
+    const dateString = selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+  
+    // Find all horarios that include the selected date
+    const relevantHorarios = selectedPrestador.attributes.horarios.data.filter(horario => {
+      const horarioStart = new Date(horario.attributes.fechaInicio);
+      const horarioEnd = new Date(horario.attributes.fechaFin);
+      return selectedDate >= horarioStart && selectedDate <= horarioEnd;
+    });
+  
+    let availableHours = [];
+    relevantHorarios.forEach(horario => {
+      const startHour = parseInt(horario.attributes.horaInicio.split(':')[0]);
+      const endHour = parseInt(horario.attributes.horaFin.split(':')[0]);
+      
+      for (let hour = startHour; hour < endHour; hour++) {
+        availableHours.push(`${hour.toString().padStart(2, '0')}:00`);
+      }
+    });
+  
+    // Remove duplicates and sort
+    availableHours = [...new Set(availableHours)].sort();
+  
+    // Filter out already reserved hours
+    const reservedHours = selectedPrestador.attributes.reservas.data
+      .filter(reserva => reserva.attributes.fecha === dateString)
+      .map(reserva => reserva.attributes.hora.slice(0, 5));
+  
+    availableHours = availableHours.filter(hour => !reservedHours.includes(hour));
+  
     setAvailableHours(availableHours);
   };
 
@@ -188,6 +224,7 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
         reserva.attributes.fecha === dateString &&
         reserva.attributes.prestador.data.id === formData.prestador
     );
+
 
     return reservasDelDia?.length >= maxReservasPorDia;
   };
