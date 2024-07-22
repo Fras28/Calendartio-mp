@@ -4,6 +4,7 @@ import { Box, useMediaQuery } from '@chakra-ui/react';
 import bgImg from "../assets/fontoTest.jpeg";
 import WithSpeechBubbles from './Testimonios';
 import NuevaReserva from '../NuevaReserva';
+import SignInBtn from '../Autenticacion/signInBtn';
 
 const Testim = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,6 +52,7 @@ const Testim = () => {
           <Box height="70dvh" display="flex" justifyContent="center" alignItems="center" bg="rgba(0, 0, 0, 0.5)">
             <WithSpeechBubbles />
           </Box>
+        
         </Parallax>
       )}
       {modalOpen && (
