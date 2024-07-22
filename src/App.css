@@ -242,7 +242,7 @@
 .nueva-reserva-container {
   padding: 20px;
   background-color: #f0f0f0;
-
+  height: 100%;
 }
 
 .nueva-reserva-form {
@@ -251,7 +251,7 @@
 }
 
 .nueva-reserva-form div {
-  margin-bottom: 15px;
+  margin-bottom: .5rem;
 }
 
 .nueva-reserva-form label {
@@ -291,7 +291,6 @@
 }
 
 .nueva-reserva-form button {
-  padding: 10px 20px;
   background-color: #4caf50;
   color: white;
   border: none;
