@@ -6,6 +6,7 @@ import ReactDatePicker from 'react-datepicker';
 import CheckoutPro from '../MercadoPago/PaymentForm';
 
 const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
+  console.log(prestador);
   const dispatch = useDispatch();
   const user = useSelector(state => state?.reservas?.user);
   const reservas = useSelector((state) => state?.reservas?.reservas?.data);
@@ -26,7 +27,7 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
     email: user ? user.email : '',
     fecha: '',
     hora: '',
-    prestador: prestador ? prestador.idPrestador : '',
+    prestador:  prestador?.idPrestador,
     precio: selectedPrice.precio,
     duracion: selectedPrice.tiempo
   };
@@ -127,9 +128,13 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
   
     const dateString = validDate.toISOString().split('T')[0];
     
+
+console.log(reservas[0]
+);
+
     const reservasDelDia = reservas?.filter(reserva =>
-      reserva.attributes.fecha === dateString &&
-      reserva.attributes.prestador.data.id === formData.prestador
+      reserva?.attributes?.fecha === dateString &&
+      reserva?.attributes?.prestador?.data.id === formData.prestador
     );
     
     return reservasDelDia?.length >= maxReservasPorDia;
