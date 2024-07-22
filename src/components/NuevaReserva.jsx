@@ -6,14 +6,19 @@ import ReactDatePicker from "react-datepicker";
 import CheckoutPro from "../MercadoPago/PaymentForm";
 import classNames from "classnames";
 
+
 const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
   console.log(prestador);
   const dispatch = useDispatch();
-  const user = useSelector(state => state?.reservas?.user);
+  const user = useSelector((state) => state?.reservas?.user);
   const reservas = useSelector((state) => state?.reservas?.reservas?.data);
   const prestadores = useSelector((state) => state?.reservas?.prestadores);
-  const maxReservasPorDia = useSelector((state) => state?.reservas?.maxReservasPorDia);
-  const maxReservasPorHora = useSelector((state) => state?.reservas?.maxReservasPorHora);
+  const maxReservasPorDia = useSelector(
+    (state) => state?.reservas?.maxReservasPorDia
+  );
+  const maxReservasPorHora = useSelector(
+    (state) => state?.reservas?.maxReservasPorHora
+  );
 
   let selectedPrice;
   try {
@@ -24,17 +29,38 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
   }
 
   const initialFormData = {
-    nombreCliente: user ? user.username : '',
-    email: user ? user.email : '',
-    fecha: '',
-    hora: '',
-    prestador:  prestador?.idPrestador,
-    precio: selectedPrice?.precio,
-    duracion: selectedPrice?.tiempo
+    nombreCliente: user ? user.username : "",
+    email: user ? user.email : "",
+    fecha: "",
+    hora: "",
+    prestador: prestador ? prestador.idPrestador : "",
+    precio: selectedPrice.precio,
+    duracion: selectedPrice.tiempo,
+  };
+
+  const HorarioCasillas = ({ availableHours, selectedHour, onChange }) => {
+    return (
+      <div className="horario-casillas">
+        {availableHours.map((hour) => (
+          <button
+            key={hour}
+            type="button"
+            className={`horario-casilla ${
+              selectedHour === hour ? "selected" : ""
+            }`}
+            onClick={() => onChange(hour)}
+          >
+            {hour}
+            {selectedHour === hour && <span className="check-icon">✓</span>}
+          </button>
+        ))}
+      </div>
+    );
+
   };
 
   const [formData, setFormData] = useState(initialFormData);
-  const [messages, setMessages] = useState({ success: '', error: '' });
+  const [messages, setMessages] = useState({ success: "", error: "" });
   const [availableDates, setAvailableDates] = useState([]);
   const [availableHours, setAvailableHours] = useState([]);
 
@@ -51,10 +77,12 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
   const updateAvailableDates = () => {
     if (!formData.prestador) return;
 
+
     const selectedPrestador = prestadores.find(
       (p) => p.id === parseInt(formData.prestador)
     );
     if (!selectedPrestador) return;
+
 
     const today = new Date();
     const dates = [];
@@ -63,30 +91,11 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
     for (let i = 0; i < 30; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      const dateString = date.toISOString().split("T")[0]; // YYYY-MM-DD format
 
-      const hasAvailableHorario =
-        selectedPrestador.attributes.horarios.data.some((horario) => {
-          const horarioStart = new Date(horario.attributes.fechaInicio);
-          const horarioEnd = new Date(horario.attributes.fechaFin);
-          const isWithinDateRange = date >= horarioStart && date <= horarioEnd;
+      if (date.getDay() !== 0) {
+        // Excluye los domingos
+        if (!isDayFull(date)) {
 
-          if (isWithinDateRange) {
-            const horaInicio = new Date(
-              `${dateString}T${horario.attributes.horaInicio}`
-            );
-            const horaFin = new Date(
-              `${dateString}T${horario.attributes.horaFin}`
-            );
-            return horaFin > horaInicio; // Check if there's actually time available on this day
-          }
-          return false;
-        });
-
-      if (hasAvailableHorario) {
-        if (isDayFull(date)) {
-          unavailableDates.push(date);
-        } else {
           dates.push(date);
         }
       }
@@ -97,6 +106,7 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
 
   const updateAvailableHours = () => {
     if (!formData.prestador || !formData.fecha) return;
+
   
     const selectedPrestador = prestadores.find(p => p.id === parseInt(formData.prestador));
     if (!selectedPrestador) return;
@@ -147,6 +157,10 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
     setAvailableHours([]);
   };
 
+  const handleHoraChange = (hora) => {
+    setFormData({ ...formData, hora });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isHourReserved(formData.fecha, `${formData.hora}:00.000`)) {
@@ -172,16 +186,21 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
     try {
       const horaFormateada = `${formData.hora}:00.000`;
       await dispatch(createReserva({ ...formData, hora: horaFormateada }));
-      setMessages({ success: '¡Reserva realizada con Éxito!', error: '' });
+      setMessages({ success: "¡Reserva realizada con Éxito!", error: "" });
     } catch (error) {
-      setMessages({ success: '', error: error.message || 'Error al realizar la reserva.' });
+      setMessages({
+        success: "",
+        error: error.message || "Error al realizar la reserva.",
+      });
     }
   };
 
-  const telefonoPrestador = '542915729501';
+  const telefonoPrestador = "542915729501";
   const handleWhatsApp = () => {
-    const prestadorSeleccionado = prestadores.find(p => p.id === formData.prestador);
-    const nombrePrestador = prestadorSeleccionado?.attributes?.nombre || '';
+    const prestadorSeleccionado = prestadores.find(
+      (p) => p.id === formData.prestador
+    );
+    const nombrePrestador = prestadorSeleccionado?.attributes?.nombre || "";
     const message = `¡Hola! Quiero confirmar mi reserva:\n\nNombre: ${formData.nombreCliente}\nEmail: ${formData.email}\nFecha: ${formData.fecha}\nHora: ${formData.hora}\nPrestador: ${nombrePrestador}\nPrecio: $${selectedPrice.precio}\nDuración: ${selectedPrice.tiempo} minutos`;
     const whatsappURL = `https://wa.me/${telefonoPrestador}?text=${encodeURIComponent(
       message
@@ -192,36 +211,31 @@ const NuevaReserva = ({ prestador, precio = '{"precio": 0, "tiempo": 0}' }) => {
   const isDayFull = (date) => {
     // Ensure date is a valid Date object
     const validDate = date instanceof Date ? date : new Date(date);
-    
+
     if (isNaN(validDate.getTime())) {
-      console.error('Invalid date:', date);
+      console.error("Invalid date:", date);
       return false;
     }
-  
-    const dateString = validDate.toISOString().split('T')[0];
-    
 
-console.log(reservas[0]
-);
+    const dateString = validDate.toISOString().split("T")[0];
 
-    const reservasDelDia = reservas?.filter(reserva =>
-      reserva?.attributes?.fecha === dateString &&
-      reserva?.attributes?.prestador?.data.id === formData.prestador
-    const dateString = date.toISOString().split("T")[0];
     const reservasDelDia = reservas?.filter(
       (reserva) =>
         reserva.attributes.fecha === dateString &&
-        reserva.attributes.prestador.data.id === parseInt(formData.prestador)
+        reserva.attributes.prestador.data.id === formData.prestador
     );
+
+
     return reservasDelDia?.length >= maxReservasPorDia;
   };
 
   const isHourReserved = (date, hour) => {
-    const dateString = date.toISOString().split('T')[0];
-    return reservas?.some(reserva =>
-      reserva.attributes.fecha === dateString &&
-      reserva.attributes.hora === hour &&
-      reserva.attributes.prestador.data.id === formData.prestador
+    const dateString = date.toISOString().split("T")[0];
+    return reservas?.some(
+      (reserva) =>
+        reserva.attributes.fecha === dateString &&
+        reserva.attributes.hora === hour &&
+        reserva.attributes.prestador.data.id === formData.prestador
     );
   };
 
@@ -230,7 +244,9 @@ console.log(reservas[0]
     return (
       <div className="nueva-reserva-container" style={{ marginBottom: "2rem" }}>
         <h1>Reserva de Turnos</h1>
-        <p>Campos obligatorios <span style={{ color: "red" }}>*</span></p>
+        <p>
+          Campos obligatorios <span style={{ color: "red" }}>*</span>
+        </p>
         <form className="nueva-reserva-form" onSubmit={handleSubmit}>
           <div>
             <label>Turno con :</label>
@@ -249,7 +265,9 @@ console.log(reservas[0]
             </select>
           </div>
           <div>
-            <label>Fecha<span style={{ color: "red" }}>*</span>:</label>
+            <label>
+              Fecha<span style={{ color: "red" }}>*</span>:
+            </label>
             <ReactDatePicker
               selected={formData.fecha}
               onChange={handleDateChange}
@@ -260,20 +278,14 @@ console.log(reservas[0]
             />
           </div>
           <div>
-            <label>Hora<span style={{ color: "red" }}>*</span>:</label>
-            <select
-              name="hora"
-              value={formData.hora}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Seleccionar hora</option>
-              {availableHours.map((hour) => (
-                <option key={hour} value={hour}>
-                  {hour}
-                </option>
-              ))}
-            </select>
+            <label>
+              Hora<span style={{ color: "red" }}>*</span>:
+            </label>
+            <HorarioCasillas
+              availableHours={availableHours}
+              selectedHour={formData.hora}
+              onChange={handleHoraChange}
+            />
           </div>
           <div>
             <p style={{ margin: ".5rem 0" }}>Confirmar Reserva</p>
@@ -292,11 +304,16 @@ console.log(reservas[0]
             >
               Confirmar por WhatsApp
             </button>
-            <CheckoutPro info={formData} onPaymentSuccess={handlePaymentSuccess} />
+            <CheckoutPro
+              info={formData}
+              onPaymentSuccess={handlePaymentSuccess}
+            />
           </div>
         </form>
-        {messages.success && <p style={{ color: 'green' }}>{messages.success}</p>}
-        {messages.error && <p style={{ color: 'red' }}>{messages.error}</p>}
+        {messages.success && (
+          <p style={{ color: "green" }}>{messages.success}</p>
+        )}
+        {messages.error && <p style={{ color: "red" }}>{messages.error}</p>}
       </div>
     );
   }
@@ -304,10 +321,14 @@ console.log(reservas[0]
   return (
     <div className="nueva-reserva-container" style={{ marginBottom: "2rem" }}>
       <h1>Reserva de Turnos</h1>
-      <p>Campos obligatorios <span style={{ color: "red" }}>*</span></p>
+      <p>
+        Campos obligatorios <span style={{ color: "red" }}>*</span>
+      </p>
       <form className="nueva-reserva-form" onSubmit={handleSubmit}>
         <div>
-          <label>Nombre del cliente<span style={{ color: "red" }}>*</span>:</label>
+          <label>
+            Nombre del cliente<span style={{ color: "red" }}>*</span>:
+          </label>
           <input
             type="text"
             name="nombreCliente"
@@ -317,7 +338,9 @@ console.log(reservas[0]
           />
         </div>
         <div>
-          <label>Email<span style={{ color: "red" }}>*</span>:</label>
+          <label>
+            Email<span style={{ color: "red" }}>*</span>:
+          </label>
           <input
             type="email"
             name="email"
@@ -343,7 +366,9 @@ console.log(reservas[0]
           </select>
         </div>
         <div>
-          <label>Fecha<span style={{ color: "red" }}>*</span>:</label>
+          <label>
+            Fecha<span style={{ color: "red" }}>*</span>:
+          </label>
           <ReactDatePicker
             selected={formData.fecha}
             onChange={handleDateChange}
@@ -354,20 +379,14 @@ console.log(reservas[0]
           />
         </div>
         <div>
-          <label>Hora<span style={{ color: "red" }}>*</span>:</label>
-          <select
-            name="hora"
-            value={formData.hora}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccionar hora</option>
-            {availableHours.map((hour) => (
-              <option key={hour} value={hour}>
-                {hour}
-              </option>
-            ))}
-          </select>
+          <label>
+            Hora<span style={{ color: "red" }}>*</span>:
+          </label>
+          <HorarioCasillas
+            availableHours={availableHours}
+            selectedHour={formData.hora}
+            onChange={handleHoraChange}
+          />
         </div>
         <div>
           <p style={{ margin: ".5rem 0" }}>Confirmar Reserva</p>
@@ -386,11 +405,14 @@ console.log(reservas[0]
           >
             Confirmar por WhatsApp
           </button>
-          <CheckoutPro info={formData} onPaymentSuccess={handlePaymentSuccess} />
+          <CheckoutPro
+            info={formData}
+            onPaymentSuccess={handlePaymentSuccess}
+          />
         </div>
       </form>
-      {messages.success && <p style={{ color: 'green' }}>{messages.success}</p>}
-      {messages.error && <p style={{ color: 'red' }}>{messages.error}</p>}
+      {messages.success && <p style={{ color: "green" }}>{messages.success}</p>}
+      {messages.error && <p style={{ color: "red" }}>{messages.error}</p>}
     </div>
   );
 };
