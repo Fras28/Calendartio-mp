@@ -10,7 +10,7 @@ import Fondo from './assets/fondo.jpg'; // Asegúrate de tener esta imagen
 const ParallaxComponent = () => {
   return (
     <ChakraProvider>
-      <Box height="100vh" width="100vw" position="relative" overflow="hidden">
+      <Box height="100vh" width="100vw" position="relative" overflow="hidden" >
         <Parallax pages={2}>
           <ParallaxLayer offset={0} speed={0.2}>
             <Image src={Fondo} alt="Fondo" width="100%" height="auto" />

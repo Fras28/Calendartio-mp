@@ -21,56 +21,52 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Tooltip,
 } from '@chakra-ui/react';
 import {
   HamburgerIcon,
   CloseIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  SettingsIcon,
 } from '@chakra-ui/icons';
-import { logout} from '../redux/slice';
-
-
+import { logout } from '../redux/slice';
 
 const NAV_ITEMS = [
-  {
-    label: 'Inspiration',
-    children: [
-      {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
-        href: '#',
-      },
-      {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Find Work',
-    children: [
-      {
-        label: 'Job Board',
-        subLabel: 'Find your dream design job',
-        href: '#',
-      },
-      {
-        label: 'Freelance Projects',
-        subLabel: 'An exclusive list for contract work',
-        href: '#',
-      },
-    ],
-  },
-  {
-    label: 'Learn Design',
-    href: '#',
-  },
-  {
-    label: 'Ver Reservas',
-    href: '/admin',
-  },
+  // {
+  //   label: 'Inspiration',
+  //   children: [
+  //     {
+  //       label: 'Explore Design Work',
+  //       subLabel: 'Trending Design to inspire you',
+  //       href: '#',
+  //     },
+  //     {
+  //       label: 'New & Noteworthy',
+  //       subLabel: 'Up-and-coming Designers',
+  //       href: '#',
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: 'Find Work',
+  //   children: [
+  //     {
+  //       label: 'Job Board',
+  //       subLabel: 'Find your dream design job',
+  //       href: '#',
+  //     },
+  //     {
+  //       label: 'Freelance Projects',
+  //       subLabel: 'An exclusive list for contract work',
+  //       href: '#',
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: 'Learn Design',
+  //   href: '#',
+  // },
 ];
 
 const DesktopNav = () => {
@@ -222,6 +218,7 @@ const WithSubnavigation = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, token } = useSelector((state) => state.reservas);
+  const role = useSelector((state) => state?.reservas?.role);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -231,7 +228,7 @@ const WithSubnavigation = () => {
   return (
     <Box>
       <Flex
-        bg={useColorModeValue('#E5B9D7', 'gray.800')}
+        bg={useColorModeValue('#88B9BF', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         minH={'60px'}
         py={{ base: 2 }}
@@ -240,19 +237,26 @@ const WithSubnavigation = () => {
         borderStyle={'solid'}
         borderColor={useColorModeValue('#6E5E84', '#6E5E84')}
         align={'center'}>
-        <Flex
-          flex={{ base: 1, md: 'auto' }}
-          ml={{ base: -2 }}
-          display={{ base: 'flex', md: 'none' }}>
-          <IconButton
-            onClick={onToggle}
-            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
-            variant={'ghost'}
-            aria-label={'Toggle Navigation'}
-          />
-        </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
+       
+        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
           <img src={Logo} style={{ height: "80px" }} alt="Logo" />
+          
+          {role?.name === 'Admin' && (
+            <Tooltip label="Panel de Administrador" placement="bottom">
+              <IconButton
+                as={Link}
+                to="/admin"
+                icon={<SettingsIcon />}
+                variant="ghost"
+                color="#6C442B"
+                aria-label="Admin Panel"
+                ml={2}
+                _hover={{
+                  bg: 'pink.50',
+                }}
+              />
+            </Tooltip>
+          )}
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             <DesktopNav />
@@ -272,39 +276,41 @@ const WithSubnavigation = () => {
                 variant={'link'}
                 cursor={'pointer'}
                 minW={0}>
-                <Text color={"#6C442B"}>Hola,{user?.username}!</Text>
+                <Text color={"#6C442B"}>Hola, {user?.username}!</Text>
               </MenuButton>
               <MenuList>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                <MenuItem as={NavLink} to={"/perfil"} >Perfil</MenuItem>
+                <MenuItem as={NavLink} to={"/perfil"}>Perfil</MenuItem>
               </MenuList>
             </Menu>
           ) : (
             <>
               <Button as={Link} to="/login" fontSize={'sm'} fontWeight={400} variant={'link'} color={"#6C442B"}>
-                Sign In
+                Ingresar
               </Button>
               <Button
                 as={Link}
                 to="/register"
-                display={{ base: 'none', md: 'inline-flex' }}
+                display={{ base: 'inline-flex', md: 'inline-flex' }}
                 fontSize={'sm'}
                 fontWeight={600}
-                color={'#88B9BF'}
-                style={{ backgroundColor: "#6E5E84", border: "solid #2E1F13 4px", borderRadius: "12px" }}
+                bgColor="#6E5E84"
+                border="dashed #2E1F13 4px"
+                color="#88B9BF"
                 _hover={{
-                  bg: 'pink.300',
-                }}>
-                Sign Up
+                  border: "solid #2E1F13 4px",
+                }}
+                >
+                Registrarte
               </Button>
             </>
           )}
         </Stack>
       </Flex>
 
-      <Collapse in={isOpen} animateOpacity>
+      {/* <Collapse in={isOpen} animateOpacity>
         <MobileNav />
-      </Collapse>
+      </Collapse> */}
     </Box>
   );
 };

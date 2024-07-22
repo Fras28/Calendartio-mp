@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchReservas, deleteReserva } from "./redux/slice";
+import { fetchReservas, deleteReserva } from "../redux/slice";
 import { Button, Checkbox, IconButton } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import "./../App.css";
+import "../../App.css";
 
 const Calendario = () => {
   const dispatch = useDispatch();
