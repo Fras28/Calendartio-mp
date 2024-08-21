@@ -20,7 +20,7 @@ export const fetchPrestadores = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get(
-        `${API_URL}/api/prestadores?populate=avatar&populate=fondoPerfil&populate=valors&populate=horarios&populate=reservas`
+        `${API_URL}/api/prestadores?populate=avatar&populate=fondoPerfil&populate=valors&populate=horarios&populate=reservas&populate=comercios&filters[comercios][id][$eq]=${COMERCIO_ID}`
       );
       return response.data;
     } catch (error) {
